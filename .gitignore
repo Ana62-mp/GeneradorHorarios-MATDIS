@@ -1,0 +1,212 @@
+# ==================================================
+# DEPENDENCIAS DE NODE
+# ==================================================
+
+node_modules/
+**/node_modules/
+
+.pnpm-store/
+.yarn/
+.yarn-cache/
+.npm/
+
+
+# ==================================================
+# VARIABLES DE ENTORNO Y DATOS PRIVADOS
+# ==================================================
+
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Sí se pueden subir archivos de ejemplo sin contraseñas
+!.env.example
+!**/.env.example
+
+# Certificados, llaves y secretos
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets/
+**/secrets/
+
+
+# ==================================================
+# BACKEND: TYPESCRIPT Y NODE
+# ==================================================
+
+backend/dist/
+backend/build/
+backend/out/
+
+**/*.tsbuildinfo
+
+# Archivos temporales de TypeScript
+.ts-node/
+**/.ts-node/
+
+
+# ==================================================
+# FRONTEND: REACT Y VITE
+# ==================================================
+
+frontend/dist/
+frontend/build/
+
+.vite/
+**/.vite/
+
+# Variables locales creadas por Vite
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Archivos generados de análisis
+stats.html
+vite.config.*.timestamp-*
+
+
+# ==================================================
+# PRISMA
+# ==================================================
+
+# Cliente generado por Prisma
+backend/src/generated/
+backend/generated/
+**/generated/prisma/
+**/src/generated/prisma/
+
+# Bases locales SQLite, por si se usan en pruebas
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# IMPORTANTE:
+# No ignorar prisma/schema.prisma
+# No ignorar prisma/migrations/
+# No ignorar prisma.config.ts
+
+
+# ==================================================
+# ARCHIVOS SUBIDOS DURANTE LA EJECUCIÓN
+# ==================================================
+
+uploads/
+**/uploads/*
+
+# Permite conservar una carpeta uploads vacía
+!**/uploads/.gitkeep
+
+
+# ==================================================
+# LOGS
+# ==================================================
+
+logs/
+**/logs/
+
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+
+# ==================================================
+# PRUEBAS Y COBERTURA
+# ==================================================
+
+coverage/
+**/coverage/
+
+.nyc_output/
+test-results/
+playwright-report/
+
+
+# ==================================================
+# CACHÉ Y ARCHIVOS TEMPORALES
+# ==================================================
+
+.cache/
+**/.cache/
+
+.tmp/
+**/.tmp/
+
+temp/
+**/temp/
+
+tmp/
+**/tmp/
+
+.eslintcache
+.stylelintcache
+
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
+
+# ==================================================
+# EDITORES
+# ==================================================
+
+.vscode/
+**/.vscode/
+
+.idea/
+**/.idea/
+
+*.code-workspace
+
+.project
+.classpath
+.settings/
+
+
+# ==================================================
+# SISTEMA OPERATIVO
+# ==================================================
+
+.DS_Store
+**/.DS_Store
+
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+$RECYCLE.BIN/
+.Spotlight-V100/
+.Trashes/
+
+
+# ==================================================
+# ARCHIVOS COMPRIMIDOS O PAQUETES GENERADOS
+# ==================================================
+
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
+*.tgz
+
+
+# ==================================================
+# OTROS ARCHIVOS GENERADOS
+# ==================================================
+
+*.pid
+*.pid.lock
+*.seed
+*.local
