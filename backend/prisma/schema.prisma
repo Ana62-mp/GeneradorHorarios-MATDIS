@@ -1,13 +1,232 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+// ==================================================
+// ENUMS
+// ==================================================
+
+enum Day {
+  LUNES
+  MARTES
+  MIERCOLES
+  JUEVES
+  VIERNES
+  SABADO
+  DOMINGO
+}
+
+enum Modality {
+  PRESENCIAL
+  VIRTUAL
+}
+
+enum RequiredModality {
+  CUALQUIERA
+  PRESENCIAL
+  VIRTUAL
+}
+
+enum Difficulty {
+  BAJA
+  MEDIA
+  ALTA
+}
+
+enum ScheduleStatus {
+  VALIDO
+  DESCARTADO
+}
+
+enum RejectionCode {
+  CANTIDAD_INCORRECTA
+  MATERIAS_OBLIGATORIAS_FALTANTES
+  CRUCE_HORARIO
+  MODALIDAD_NO_CUMPLIDA
+  MAXIMO_DIFICILES_SUPERADO
+  MAXIMO_CREDITOS_SUPERADO
+  PRERREQUISITOS_NO_CUMPLIDOS
+  MATERIA_NO_DISPONIBLE
+}
+
+// ==================================================
+// MATERIAS
+// Cada registro representa una oferta específica.
+// ==================================================
+
+model Course {
+  id         Int        @id @default(autoincrement())
+  name       String     @db.VarChar(100)
+  section    String?    @db.VarChar(20)
+  day        Day
+  startTime  DateTime   @map("start_time") @db.Time(0)
+  endTime    DateTime   @map("end_time") @db.Time(0)
+  modality   Modality
+  difficulty Difficulty
+  credits    Int
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Prerrequisitos que necesita esta materia
+  prerequisiteLinks Prerequisite[] @relation("CoursePrerequisites")
+
+  // Materias que tienen esta materia como prerrequisito
+  requiredByLinks Prerequisite[] @relation("CourseRequiredBy")
+
+  requiredInConfigurations  ConfigurationRequiredCourse[]
+  completedInConfigurations ConfigurationCompletedCourse[]
+  scheduleCourses           ScheduleCourse[]
+
+  @@index([name])
+  @@index([day, startTime, endTime])
+  @@map("courses")
+}
+
+// ==================================================
+// PRERREQUISITOS
+// Relación de una materia con otra materia.
+// ==================================================
+
+model Prerequisite {
+  courseId             Int @map("course_id")
+  prerequisiteCourseId Int @map("prerequisite_course_id")
+
+  course Course @relation("CoursePrerequisites", fields: [courseId], references: [id], onDelete: Cascade)
+
+  prerequisiteCourse Course @relation("CourseRequiredBy", fields: [prerequisiteCourseId], references: [id], onDelete: Cascade)
+
+  @@id([courseId, prerequisiteCourseId])
+  @@index([prerequisiteCourseId])
+  @@map("prerequisites")
+}
+
+// ==================================================
+// CONFIGURACIÓN DE GENERACIÓN
+// Guarda las restricciones ingresadas por el usuario.
+// ==================================================
+
+model ScheduleConfiguration {
+  id                      Int              @id @default(autoincrement())
+  numberOfCourses         Int              @map("number_of_courses")
+  maximumCredits          Int              @map("maximum_credits")
+  maximumDifficultCourses Int              @map("maximum_difficult_courses")
+  requiredModality        RequiredModality @default(CUALQUIERA) @map("required_modality")
+  avoidTimeConflicts      Boolean          @default(true) @map("avoid_time_conflicts")
+  validatePrerequisites   Boolean          @default(true) @map("validate_prerequisites")
+
+  // Estadísticas de la generación
+  totalAvailableCourses   Int @default(0) @map("total_available_courses")
+  totalCombinations       Int @default(0) @map("total_combinations")
+  validSchedulesCount     Int @default(0) @map("valid_schedules_count")
+  discardedSchedulesCount Int @default(0) @map("discarded_schedules_count")
+
+  createdAt   DateTime  @default(now()) @map("created_at")
+  generatedAt DateTime? @map("generated_at")
+
+  requiredCourses  ConfigurationRequiredCourse[]
+  completedCourses ConfigurationCompletedCourse[]
+  schedules        GeneratedSchedule[]
+
+  @@map("schedule_configurations")
+}
+
+// ==================================================
+// MATERIAS OBLIGATORIAS DE UNA CONFIGURACIÓN
+// ==================================================
+
+model ConfigurationRequiredCourse {
+  configurationId Int @map("configuration_id")
+  courseId        Int @map("course_id")
+
+  configuration ScheduleConfiguration @relation(fields: [configurationId], references: [id], onDelete: Cascade)
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@id([configurationId, courseId])
+  @@index([courseId])
+  @@map("configuration_required_courses")
+}
+
+// ==================================================
+// MATERIAS APROBADAS PREVIAMENTE
+// ==================================================
+
+model ConfigurationCompletedCourse {
+  configurationId Int @map("configuration_id")
+  courseId        Int @map("course_id")
+
+  configuration ScheduleConfiguration @relation(fields: [configurationId], references: [id], onDelete: Cascade)
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@id([configurationId, courseId])
+  @@index([courseId])
+  @@map("configuration_completed_courses")
+}
+
+// ==================================================
+// HORARIOS GENERADOS
+// Cada combinación será válida o descartada.
+// ==================================================
+
+model GeneratedSchedule {
+  id                    Int            @id @default(autoincrement())
+  configurationId       Int            @map("configuration_id")
+  combinationNumber     Int            @map("combination_number")
+  status                ScheduleStatus
+  totalCredits          Int            @map("total_credits")
+  difficultCoursesCount Int            @map("difficult_courses_count")
+  createdAt             DateTime       @default(now()) @map("created_at")
+
+  configuration ScheduleConfiguration @relation(fields: [configurationId], references: [id], onDelete: Cascade)
+
+  courses          ScheduleCourse[]
+  rejectionReasons RejectionReason[]
+
+  @@unique([configurationId, combinationNumber])
+  @@index([configurationId, status])
+  @@map("generated_schedules")
+}
+
+// ==================================================
+// MATERIAS QUE PERTENECEN A CADA HORARIO
+// ==================================================
+
+model ScheduleCourse {
+  scheduleId Int @map("schedule_id")
+  courseId   Int @map("course_id")
+
+  schedule GeneratedSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@id([scheduleId, courseId])
+  @@index([courseId])
+  @@map("schedule_courses")
+}
+
+// ==================================================
+// RAZONES POR LAS QUE UN HORARIO FUE DESCARTADO
+// ==================================================
+
+model RejectionReason {
+  id         Int           @id @default(autoincrement())
+  scheduleId Int           @map("schedule_id")
+  code       RejectionCode
+  message    String        @db.VarChar(255)
+
+  schedule GeneratedSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  @@index([scheduleId])
+  @@map("rejection_reasons")
 }
