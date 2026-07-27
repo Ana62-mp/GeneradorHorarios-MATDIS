@@ -1,0 +1,30 @@
+:root {
+  /* Paleta principal */
+  --color-ink: #04151f;
+  --color-slate: #183a37;
+  --color-wheat: #efd6ac;
+  --color-orange: #c44900;
+  --color-violet: #432534;
+
+  /* Colores auxiliares */
+  --color-white: #ffffff;
+  --color-background: #f8f4ed;
+  --color-surface: #ffffff;
+  --color-text: #17252a;
+  --color-muted: #6b7478;
+  --color-border: rgba(4, 21, 31, 0.12);
+
+  /* Sombras */
+  --shadow-small: 0 8px 24px rgba(4, 21, 31, 0.08);
+  --shadow-medium: 0 18px 45px rgba(4, 21, 31, 0.14);
+  --shadow-orange: 0 12px 30px rgba(196, 73, 0, 0.28);
+
+  /* Bordes */
+  --radius-small: 12px;
+  --radius-medium: 20px;
+  --radius-large: 30px;
+
+  /* Animaciones */
+  --transition-fast: 180ms ease;
+  --transition-normal: 280ms ease;
+}

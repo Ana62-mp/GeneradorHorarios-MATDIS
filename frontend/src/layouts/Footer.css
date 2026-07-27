@@ -1,0 +1,24 @@
+.app-footer {
+  padding: 1.4rem 0;
+  color: rgba(255, 255, 255, 0.72);
+  background-color: var(--color-ink);
+  border-top: 1px solid rgba(239, 214, 172, 0.12);
+}
+
+.app-footer__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.app-footer svg {
+  color: var(--color-orange);
+}
+
+@media (max-width: 767px) {
+  .app-footer__content {
+    flex-direction: column;
+    text-align: center;
+  }
+}
