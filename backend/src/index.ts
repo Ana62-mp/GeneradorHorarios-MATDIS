@@ -5,6 +5,7 @@ import prisma from "./database/prisma.js";
 import courseRoutes from "./routes/course.routes.js";
 import scheduleRoutes from "./routes/schedule.routes.js";
 import { errorHandler, notFoundHandler,} from "./middlewares/error.middleware.js";
+import { setupSwagger } from "./swagger.js";
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3001;
@@ -17,6 +18,7 @@ app.use(
 );
 
 app.use(express.json());
+setupSwagger(app);
 
 // Ruta principal
 app.get("/", (_request, response) => {

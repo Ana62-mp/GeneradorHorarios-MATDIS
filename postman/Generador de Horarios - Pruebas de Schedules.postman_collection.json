@@ -1,0 +1,1275 @@
+{
+  "info": {
+    "_postman_id": "f20aa668-4073-4914-b011-e2ecdde05714",
+    "name": "Generador de Horarios - Pruebas de Schedules",
+    "description": "Colección para probar POST /schedules/generate.\n\nAntes de ejecutarla:\n1. Inicia el backend con npm run dev.\n2. Verifica que PostgreSQL esté activo.\n3. Ejecuta toda la colección con Collection Runner y en el orden indicado.\n\nLa colección crea materias temporales, prueba combinatoria, cruces, modalidad, prerrequisitos y errores; al final elimina los datos creados.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50590300",
+    "_collection_link": "https://go.postman.co/collection/50590300-f20aa668-4073-4914-b011-e2ecdde05714?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01 - Verificar API",
+      "item": [
+        {
+          "name": "API activa",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('La API responde en JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Preparar materias de prueba",
+      "item": [
+        {
+          "name": "Crear Programación",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Materia creada: HTTP 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('La respuesta contiene el ID', function () {",
+                  "    pm.expect(json.course).to.be.an('object');",
+                  "    pm.expect(json.course.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set('programacionId', json.course.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Programación {{runId}}\",\n  \"section\": \"A\",\n  \"day\": \"LUNES\",\n  \"startTime\": \"08:00\",\n  \"endTime\": \"10:00\",\n  \"modality\": \"PRESENCIAL\",\n  \"difficulty\": \"ALTA\",\n  \"credits\": 4,\n  \"prerequisiteIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Matemáticas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Materia creada: HTTP 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('La respuesta contiene el ID', function () {",
+                  "    pm.expect(json.course).to.be.an('object');",
+                  "    pm.expect(json.course.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set('matematicasId', json.course.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Matemáticas {{runId}}\",\n  \"section\": \"A\",\n  \"day\": \"LUNES\",\n  \"startTime\": \"10:00\",\n  \"endTime\": \"12:00\",\n  \"modality\": \"PRESENCIAL\",\n  \"difficulty\": \"MEDIA\",\n  \"credits\": 3,\n  \"prerequisiteIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Inglés",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Materia creada: HTTP 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('La respuesta contiene el ID', function () {",
+                  "    pm.expect(json.course).to.be.an('object');",
+                  "    pm.expect(json.course.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set('inglesId', json.course.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Inglés {{runId}}\",\n  \"section\": \"A\",\n  \"day\": \"MARTES\",\n  \"startTime\": \"08:00\",\n  \"endTime\": \"10:00\",\n  \"modality\": \"VIRTUAL\",\n  \"difficulty\": \"BAJA\",\n  \"credits\": 2,\n  \"prerequisiteIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Redes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Materia creada: HTTP 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('La respuesta contiene el ID', function () {",
+                  "    pm.expect(json.course).to.be.an('object');",
+                  "    pm.expect(json.course.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set('redesId', json.course.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Redes {{runId}}\",\n  \"section\": \"A\",\n  \"day\": \"LUNES\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"11:00\",\n  \"modality\": \"PRESENCIAL\",\n  \"difficulty\": \"ALTA\",\n  \"credits\": 4,\n  \"prerequisiteIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Base de datos básica",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Materia creada: HTTP 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('La respuesta contiene el ID', function () {",
+                  "    pm.expect(json.course).to.be.an('object');",
+                  "    pm.expect(json.course.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set('bdBasicaId', json.course.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Base de datos básica {{runId}}\",\n  \"section\": \"A\",\n  \"day\": \"MIERCOLES\",\n  \"startTime\": \"08:00\",\n  \"endTime\": \"10:00\",\n  \"modality\": \"VIRTUAL\",\n  \"difficulty\": \"MEDIA\",\n  \"credits\": 4,\n  \"prerequisiteIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Base de datos avanzada con prerrequisito",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('bdBasicaId')) {",
+                  "    throw new Error('Primero debe crearse Base de datos básica');",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Materia avanzada creada: HTTP 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('bdAvanzadaId', json.course.id);",
+                  "",
+                  "pm.test('El prerrequisito fue guardado', function () {",
+                  "    pm.expect(json.course.prerequisites).to.be.an('array');",
+                  "    pm.expect(json.course.prerequisites.length).to.eql(1);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Base de datos avanzada {{runId}}\",\n  \"section\": \"A\",\n  \"day\": \"JUEVES\",\n  \"startTime\": \"08:00\",\n  \"endTime\": \"10:00\",\n  \"modality\": \"VIRTUAL\",\n  \"difficulty\": \"ALTA\",\n  \"credits\": 4,\n  \"prerequisiteIds\": [{{bdBasicaId}}]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Diseño",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Materia creada: HTTP 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('La respuesta contiene el ID', function () {",
+                  "    pm.expect(json.course).to.be.an('object');",
+                  "    pm.expect(json.course.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set('disenoId', json.course.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Diseño {{runId}}\",\n  \"section\": \"A\",\n  \"day\": \"VIERNES\",\n  \"startTime\": \"08:00\",\n  \"endTime\": \"10:00\",\n  \"modality\": \"PRESENCIAL\",\n  \"difficulty\": \"BAJA\",\n  \"credits\": 3,\n  \"prerequisiteIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 - Probar generación de horarios",
+      "item": [
+        {
+          "name": "Generar horarios generales",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('Incluye estadísticas combinatorias', function () {",
+                  "    pm.expect(json.totalCourses).to.be.a('number');",
+                  "    pm.expect(json.selectedAmount).to.eql(3);",
+                  "    pm.expect(json.totalCombinations).to.be.a('number');",
+                  "    pm.expect(json.schedules).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Válidos + descartados = combinaciones', function () {",
+                  "    pm.expect(json.validSchedules + json.discardedSchedules).to.eql(json.totalCombinations);",
+                  "});",
+                  "",
+                  "pm.test('Muestra el modelo matemático', function () {",
+                  "    pm.expect(json.mathematicalModel).to.be.an('object');",
+                  "    pm.expect(json.mathematicalModel.combination).to.include('C(');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numberOfCourses\": 3,\n  \"maximumCredits\": 12,\n  \"maximumDifficultCourses\": 2,\n  \"requiredCourseIds\": [{{programacionId}}],\n  \"completedCourseIds\": [],\n  \"requiredModality\": \"CUALQUIERA\",\n  \"avoidTimeConflicts\": true,\n  \"validatePrerequisites\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/schedules/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "schedules",
+                "generate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Prerrequisito no cumplido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "const objetivo = json.schedules.find(item =>",
+                  "    item.courses.some(course => String(course.id) === String(pm.collectionVariables.get('bdAvanzadaId')))",
+                  ");",
+                  "",
+                  "pm.test('La materia avanzada se descarta sin prerrequisito', function () {",
+                  "    pm.expect(objetivo).to.exist;",
+                  "    pm.expect(objetivo.valid).to.eql(false);",
+                  "    pm.expect(objetivo.reasons.join(' ')).to.include('prerrequisitos');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numberOfCourses\": 1,\n  \"maximumCredits\": 10,\n  \"maximumDifficultCourses\": 2,\n  \"requiredCourseIds\": [{{bdAvanzadaId}}],\n  \"completedCourseIds\": [],\n  \"requiredModality\": \"CUALQUIERA\",\n  \"avoidTimeConflicts\": true,\n  \"validatePrerequisites\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/schedules/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "schedules",
+                "generate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Prerrequisito cumplido con materia aprobada",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "const objetivo = json.schedules.find(item =>",
+                  "    item.courses.some(course => String(course.id) === String(pm.collectionVariables.get('bdAvanzadaId')))",
+                  ");",
+                  "",
+                  "pm.test('La materia avanzada es válida al aprobar su prerrequisito', function () {",
+                  "    pm.expect(objetivo).to.exist;",
+                  "    pm.expect(objetivo.valid).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numberOfCourses\": 1,\n  \"maximumCredits\": 10,\n  \"maximumDifficultCourses\": 2,\n  \"requiredCourseIds\": [{{bdAvanzadaId}}],\n  \"completedCourseIds\": [{{bdBasicaId}}],\n  \"requiredModality\": \"VIRTUAL\",\n  \"avoidTimeConflicts\": true,\n  \"validatePrerequisites\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/schedules/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "schedules",
+                "generate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Detectar cruce de horarios",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "const programacionId = String(pm.collectionVariables.get('programacionId'));",
+                  "const redesId = String(pm.collectionVariables.get('redesId'));",
+                  "const objetivo = json.schedules.find(item => {",
+                  "    const ids = item.courses.map(course => String(course.id));",
+                  "    return ids.includes(programacionId) && ids.includes(redesId);",
+                  "});",
+                  "",
+                  "pm.test('La combinación cruzada fue descartada', function () {",
+                  "    pm.expect(objetivo).to.exist;",
+                  "    pm.expect(objetivo.valid).to.eql(false);",
+                  "    pm.expect(objetivo.reasons.join(' ')).to.include('cruces');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numberOfCourses\": 2,\n  \"maximumCredits\": 20,\n  \"maximumDifficultCourses\": 2,\n  \"requiredCourseIds\": [{{programacionId}}, {{redesId}}],\n  \"completedCourseIds\": [],\n  \"requiredModality\": \"CUALQUIERA\",\n  \"avoidTimeConflicts\": true,\n  \"validatePrerequisites\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/schedules/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "schedules",
+                "generate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Validar modalidad virtual",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('Todo horario válido contiene al menos una materia virtual', function () {",
+                  "    const validos = json.schedules.filter(item => item.valid);",
+                  "    validos.forEach(item => {",
+                  "        pm.expect(item.courses.some(course => course.modality === 'VIRTUAL')).to.eql(true);",
+                  "    });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numberOfCourses\": 2,\n  \"maximumCredits\": 20,\n  \"maximumDifficultCourses\": 2,\n  \"requiredCourseIds\": [],\n  \"completedCourseIds\": [],\n  \"requiredModality\": \"VIRTUAL\",\n  \"avoidTimeConflicts\": true,\n  \"validatePrerequisites\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/schedules/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "schedules",
+                "generate"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 - Probar validaciones",
+      "item": [
+        {
+          "name": "Error: más materias que las disponibles",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Explica que no hay suficientes materias', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.message).to.include('suficientes materias');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numberOfCourses\": 999,\n  \"maximumCredits\": 20,\n  \"maximumDifficultCourses\": 4,\n  \"requiredCourseIds\": [],\n  \"completedCourseIds\": [],\n  \"requiredModality\": \"CUALQUIERA\",\n  \"avoidTimeConflicts\": true,\n  \"validatePrerequisites\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/schedules/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "schedules",
+                "generate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Error: modalidad inválida",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Devuelve mensaje de modalidad', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.message).to.include('requiredModality');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numberOfCourses\": 2,\n  \"maximumCredits\": 20,\n  \"maximumDifficultCourses\": 2,\n  \"requiredCourseIds\": [],\n  \"completedCourseIds\": [],\n  \"requiredModality\": \"SEMIPRESENCIAL\",\n  \"avoidTimeConflicts\": true,\n  \"validatePrerequisites\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/schedules/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "schedules",
+                "generate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Error: demasiadas materias obligatorias",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Explica el exceso de materias obligatorias', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.message).to.include('obligatorias');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numberOfCourses\": 1,\n  \"maximumCredits\": 20,\n  \"maximumDifficultCourses\": 2,\n  \"requiredCourseIds\": [{{programacionId}}, {{matematicasId}}],\n  \"completedCourseIds\": [],\n  \"requiredModality\": \"CUALQUIERA\",\n  \"avoidTimeConflicts\": true,\n  \"validatePrerequisites\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/schedules/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "schedules",
+                "generate"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05 - Limpiar materias de prueba",
+      "item": [
+        {
+          "name": "Eliminar Base de datos avanzada",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Eliminación correcta: HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.collectionVariables.unset('bdAvanzadaId');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{bdAvanzadaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{bdAvanzadaId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Base de datos básica",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Eliminación correcta: HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.collectionVariables.unset('bdBasicaId');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{bdBasicaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{bdBasicaId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Programación",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Eliminación correcta: HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.collectionVariables.unset('programacionId');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{programacionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{programacionId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Matemáticas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Eliminación correcta: HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.collectionVariables.unset('matematicasId');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{matematicasId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{matematicasId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Inglés",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Eliminación correcta: HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.collectionVariables.unset('inglesId');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{inglesId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{inglesId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Redes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Eliminación correcta: HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.collectionVariables.unset('redesId');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{redesId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{redesId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Diseño",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Eliminación correcta: HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.collectionVariables.unset('disenoId');",
+                  "pm.collectionVariables.unset('runId');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{disenoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{disenoId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "06 - Metodos",
+      "item": [
+        {
+          "name": "Generar horarios",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"numberOfCourses\": 3,\r\n  \"maximumCredits\": 12,\r\n  \"maximumDifficultCourses\": 2,\r\n  \"requiredCourseIds\": [{{programacionId}}],\r\n  \"completedCourseIds\": [],\r\n  \"requiredModality\": \"CUALQUIERA\",\r\n  \"avoidTimeConflicts\": true,\r\n  \"validatePrerequisites\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/schedules/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "schedules",
+                "generate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener horarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/schedules/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "schedules",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/schedules/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "schedules",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar por ID",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/schedules/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "schedules",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "if (!pm.collectionVariables.get('runId')) {",
+          "    pm.collectionVariables.set('runId', Date.now().toString());",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001",
+      "type": "string"
+    },
+    {
+      "key": "runId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "programacionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "matematicasId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "inglesId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "redesId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "bdBasicaId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "bdAvanzadaId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "disenoId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

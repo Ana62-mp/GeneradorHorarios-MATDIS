@@ -1,0 +1,541 @@
+{
+  "info": {
+    "_postman_id": "e83b52c1-0967-4407-9db1-c452ea0c16cc",
+    "name": "Generador de Horarios - Backend",
+    "description": "Colección para validar el backend Node.js + Express + TypeScript + Prisma.\n\nEjecución recomendada:\n1. Inicia el backend con `npm run dev`.\n2. Ejecuta la colección completa con Collection Runner, en el orden indicado.\n3. La colección guarda automáticamente los IDs creados para reutilizarlos.\n\nURL predeterminada: http://localhost:3001",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50590300",
+    "_collection_link": "https://go.postman.co/collection/50590300-e83b52c1-0967-4407-9db1-c452ea0c16cc?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01 - Estado de la API",
+      "item": [
+        {
+          "name": "API funcionando",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('La respuesta indica que la API funciona', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.message).to.include('API');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
+            },
+            "description": "Comprueba que el servidor Express esté activo."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Flujo CRUD automático",
+      "item": [
+        {
+          "name": "1. Crear materia básica",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Materia creada: HTTP 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('La respuesta contiene la materia creada', function () {",
+                  "    pm.expect(json.course).to.be.an('object');",
+                  "    pm.expect(json.course.name).to.eql('Base de datos básica');",
+                  "});",
+                  "",
+                  "if (json.course && json.course.id) {",
+                  "    pm.collectionVariables.set('basicCourseId', json.course.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Base de datos básica\",\n  \"section\": \"A\",\n  \"day\": \"LUNES\",\n  \"startTime\": \"08:00\",\n  \"endTime\": \"10:00\",\n  \"modality\": \"PRESENCIAL\",\n  \"difficulty\": \"MEDIA\",\n  \"credits\": 4,\n  \"prerequisiteIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Crear materia avanzada con prerrequisito",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('basicCourseId')) {",
+                  "    throw new Error('Ejecuta primero: Crear materia básica');",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Materia avanzada creada: HTTP 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('Incluye el prerrequisito', function () {",
+                  "    pm.expect(json.course.prerequisites).to.be.an('array');",
+                  "    pm.expect(json.course.prerequisites.length).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "if (json.course && json.course.id) {",
+                  "    pm.collectionVariables.set('advancedCourseId', json.course.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Base de datos avanzada\",\n  \"section\": \"A\",\n  \"day\": \"MARTES\",\n  \"startTime\": \"10:00\",\n  \"endTime\": \"12:00\",\n  \"modality\": \"VIRTUAL\",\n  \"difficulty\": \"ALTA\",\n  \"credits\": 4,\n  \"prerequisiteIds\": [{{basicCourseId}}]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Listar materias",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Listado correcto: HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('La respuesta contiene un arreglo de materias', function () {",
+                  "    pm.expect(json.courses).to.be.an('array');",
+                  "    pm.expect(json.total).to.be.a('number');",
+                  "    pm.expect(json.courses.length).to.be.at.least(2);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Consultar materia avanzada por ID",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.collectionVariables.get('advancedCourseId')) {",
+                  "    throw new Error('Ejecuta primero: Crear materia avanzada con prerrequisito');",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Consulta por ID: HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('El ID coincide con la materia creada', function () {",
+                  "    pm.expect(String(json.course.id)).to.eql(String(pm.collectionVariables.get('advancedCourseId')));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{advancedCourseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{advancedCourseId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. Actualizar materia avanzada",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Actualización correcta: HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "",
+                  "pm.test('Los datos fueron actualizados', function () {",
+                  "    pm.expect(json.course.name).to.eql('Base de datos avanzada actualizada');",
+                  "    pm.expect(json.course.section).to.eql('B');",
+                  "    pm.expect(json.course.credits).to.eql(5);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Base de datos avanzada actualizada\",\n  \"section\": \"B\",\n  \"day\": \"MIERCOLES\",\n  \"startTime\": \"14:00\",\n  \"endTime\": \"16:00\",\n  \"modality\": \"VIRTUAL\",\n  \"difficulty\": \"ALTA\",\n  \"credits\": 5,\n  \"prerequisiteIds\": [{{basicCourseId}}]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{advancedCourseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{advancedCourseId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6. Eliminar materia avanzada",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Eliminación correcta: HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{advancedCourseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{advancedCourseId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "7. Confirmar que la materia avanzada fue eliminada",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('La materia eliminada devuelve HTTP 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{advancedCourseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{advancedCourseId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8. Eliminar materia básica",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Materia básica eliminada: HTTP 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.collectionVariables.unset('advancedCourseId');",
+                  "pm.collectionVariables.unset('basicCourseId');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{basicCourseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "{{basicCourseId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Ejecuta esta carpeta en orden para probar creación, consulta, actualización, prerrequisitos y eliminación."
+    },
+    {
+      "name": "03 - Validaciones y errores",
+      "item": [
+        {
+          "name": "Rechazar hora final anterior a la inicial",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Horario inválido: HTTP 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Devuelve un mensaje explicativo', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.message).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Materia con horario inválido\",\n  \"section\": \"A\",\n  \"day\": \"VIERNES\",\n  \"startTime\": \"12:00\",\n  \"endTime\": \"10:00\",\n  \"modality\": \"PRESENCIAL\",\n  \"difficulty\": \"BAJA\",\n  \"credits\": 2,\n  \"prerequisiteIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rechazar ID de materia inválido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('ID inválido: HTTP 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/abc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "abc"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ruta inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Ruta inexistente: HTTP 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ruta-que-no-existe",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ruta-que-no-existe"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001",
+      "type": "string"
+    }
+  ]
+}
