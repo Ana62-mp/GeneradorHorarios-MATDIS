@@ -1,34 +1,54 @@
-// Carga las variables del archivo .env
 import "dotenv/config";
-
 import express from "express";
 import cors from "cors";
+import prisma from "./database/prisma.js";
+import courseRoutes from "./routes/course.routes.js";
+import scheduleRoutes from "./routes/schedule.routes.js";
+import { errorHandler, notFoundHandler,} from "./middlewares/error.middleware.js";
 
-// Crea la aplicación de Express
 const app = express();
-
-// Obtiene el puerto desde .env.
-// Si no existe, utiliza el puerto 3001.
 const PORT = Number(process.env.PORT) || 3001;
 
-// Permite que el frontend se comunique con el backend
+// Middlewares generales
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:5173",
   }),
 );
 
-// Permite recibir información en formato JSON
 app.use(express.json());
 
-// Ruta de prueba
+// Ruta principal
 app.get("/", (_request, response) => {
   response.status(200).json({
-    mensaje: "Backend funcionando correctamente",
+    message: "API del generador de horarios funcionando",
   });
 });
 
-// Inicia el servidor
-app.listen(PORT, () => {
-  console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
-});
+// Rutas de materias
+app.use("/courses", courseRoutes);
+
+// Rutas de horarios
+app.use("/courses", courseRoutes);
+app.use("/schedules", scheduleRoutes);
+
+// Siempre deben ir al final para que reciba error
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+async function iniciarServidor() {
+  try {
+    await prisma.$connect();
+
+    console.log("Conexión con PostgreSQL exitosa");
+
+    app.listen(PORT, () => {
+      console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error("Error al iniciar el servidor:", error);
+    process.exit(1);
+  }
+}
+
+iniciarServidor();
